@@ -1,0 +1,116 @@
+import React, { Component } from 'react'
+/*global google*/
+import InfoWindowContent from './InfoWindowContent.js'
+import { compose, withProps, withState, lifecycle, withStateHandlers, withHandlers } from "recompose"
+import { withScriptjs, withGoogleMap, GoogleMap, Marker, InfoWindow } from 'react-google-maps'
+import PropTypes from 'prop-types'
+import fetch from 'isomorphic-fetch'
+
+
+const CompositeGoogleMap = compose(
+  withProps({
+    googleMapURL:
+      "https://maps.googleapis.com/maps/api/js?key=AIzaSyDctg6f7jzezClyz9iHNwgXEYm1uLQwMJk",
+    loadingElement: <div style={{ height: "100%" }} />,
+    containerElement: <div style={{ height: "100vw", width: "100%" }} />,
+    mapElement: <div style={{ height: "100%" }} />
+  }),
+  withState("center", "onCenterChange", { lat: 38.7223, lng: -9.1393 }),
+  withState("zoom", "onZoomChange", 15),
+  withHandlers(() => {
+    const refs = {
+      map: undefined
+    };
+    return {
+      onMapMounted: () => ref => {
+        refs.map = ref;
+        //console.log("Zoom to markers");
+        const bounds = new window.google.maps.LatLngBounds();
+        ref.props.children.forEach(child => {
+          // console.log('iterating over map children')
+          if (child.type === Marker) {
+            //console.log('extending bounds for ', child.props.position.lat, child.props.position.lng)
+            bounds.extend(
+              new window.google.maps.LatLng(
+                child.props.position.lat,
+                child.props.position.lng
+              )
+            );
+          }
+        });
+        ref.fitBounds(bounds);
+      }
+    };
+  }),
+  lifecycle({
+    componentDidMount() {},
+    componentDidCatch(error, info) {
+      console.log(error);
+      alert(
+        "Error Occured while trying to render google maps API Please check your credentials"
+      );
+    }
+  }),
+
+  withScriptjs,
+  withGoogleMap
+)(props => {
+  let iconDefault = {
+    url: "http://maps.gstatic.com/mapfiles/markers2/boost-marker-mapview.png" //'http://maps.gstatic.com/mapfiles/markers2/marker.png'//'http://maps.google.com/mapfiles/ms/icons/POI.shadow.png' //google.maps.SymbolPath.CIRCLE, //FORWARD_CLOSED_ARROW
+  };
+
+  return (
+    <GoogleMap
+      //ref ={props.zoomToMarkers}
+      //defaultCenter = {{ lat: 27.9158175, lng: 34.3299505 }}
+      zoom={props.zoom}
+      center={props.appCenter}
+      mapTypeId="roadmap" //terrain 'satellite' roadmap hybrid
+      ref={props.onMapMounted}
+      onZoomChanged={props.onZoomChanged}
+      onCenterChanged={props.onCenterChanged}
+    >
+      {props.markers.map((marker, index) => (
+        <Marker
+          key={index}
+          icon={props.showInfoIndex === index ? props.markerIcon : iconDefault}
+          position={{ lat: marker.lat, lng: marker.lng }}
+          title={marker.title}
+          onClick={event => {
+            props.onMarkerClicked(
+              event,
+              { lat: marker.lat, lng: marker.lng },
+              { index }
+            );
+          }}
+          animation={
+            props.showInfoIndex === index
+              ? google.maps.Animation.BOUNCE
+              : google.maps.Animation.DROP
+          } //CUSTOM_FADE BOUNCE
+        >
+          {" "}
+          {props.showInfoIndex === index && (
+            <InfoWindow
+              onCloseClick={event => {
+                props.onToggleOpen(
+                  event,
+                  { lat: marker.lat, lng: marker.lng },
+                  { index }
+                );
+              }}
+            >
+              <InfoWindowContent
+                title={marker.title}
+                latlng={{ lat: marker.lat, lng: marker.lng }}
+                venueId={marker.venueId}
+              />
+            </InfoWindow>
+          )}
+        </Marker>
+      ))}
+    </GoogleMap>
+  );
+});
+
+export default CompositeGoogleMap
