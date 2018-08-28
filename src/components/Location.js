@@ -1,6 +1,5 @@
 import React, { Component } from 'react'
-import PropTypes from 'prop-types'
-
+import PropTypes from "prop-types"
 
 
 import * as LocationAPI from '../LocationAPI.js'
@@ -18,13 +17,13 @@ class Location extends Component {
 
     onItemClick = (event, location, index) => {
         this.props.onClick(event, location, index)
-        console.log('[Location.js  location Clicked Item]', location)
+        //console.log('[Location.js  location Clicked Item]', location)
     }
 
 
     handleKeyPress = (event, location, index) => {
         this.props.onKeyPress(event, location, index)
-        console.log('Location.js location >> ', location )
+        //console.log('Location.js location >> ', location )
     }
     render() {
         const { index, location, onClick, onKeyPress, tabIndex, menuHidden, viewIndex, role } = this.props

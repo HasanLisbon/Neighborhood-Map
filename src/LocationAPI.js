@@ -26,7 +26,7 @@ export const getVenueDetails = (venueId) => {
     }
 
 export const getPlaceIdByGeocoding = (latlng) => {
-    let geoCodeUrl = [`https://maps.googleapis.com/maps/api/geocode/json?`, `latlng=${latlng.lat},${latlng.lng}&language=en&`, `KEY=AIzaSyBfB8UMdS7E9dAIHPW3HzKTkkjsMHg2i0I`].join("");
+    let geoCodeUrl = [`https://maps.googleapis.com/maps/api/geocode/json?`, `latlng=${latlng.lat},${latlng.lng}&language=en&`, `KEY=AIzaSyDctg6f7jzezClyz9iHNwgXEYm1uLQwMJk`].join("");
 
     return fetch(geoCodeUrl)
         .then(res => res.json())
@@ -35,9 +35,20 @@ export const getPlaceIdByGeocoding = (latlng) => {
             console.log(error)
         });
 }
+/*Get Place Details using Google Maps API using place_id*/
+export const getPlaceDetails = (place_id) => {
 
+    let placeDetailsUrl = [`https://maps.googleapis.com/maps/api/place/details/json?language=en`, `&placeid=${place_id}`, `&key=AIzaSyDctg6f7jzezClyz9iHNwgXEYm1uLQwMJk`].join("");
+
+    return fetch(proxyurl + placeDetailsUrl)
+        .then(res => res.json())
+        .then(data => data.result)
+        .catch(error => {
+            console.log(error)
+        })
+}
 export const getPlacePhoto = (photo_reference) => {
-    let photoReferenceUrl = [`https://maps.googleapis.com/maps/api/place/photo?maxwidth=400`, `&photoreference=${photo_reference}`, `&key=AIzaSyBfB8UMdS7E9dAIHPW3HzKTkkjsMHg2i0I`].join("");
+    let photoReferenceUrl = [`https://maps.googleapis.com/maps/api/place/photo?maxwidth=400`, `&photoreference=${photo_reference}`, `&key=AIzaSyDctg6f7jzezClyz9iHNwgXEYm1uLQwMJk`].join("");
     return fetch(proxyurl + photoReferenceUrl)
         .then(res => res.blob())
         .catch(error => {

@@ -4,7 +4,7 @@ import CompositeGoogleMap from './CompositeGoogleMap.js'
 
 class Map extends Component {
     static propTypes = {
-        locations: PropTypes.array.isRequired
+        //locations: PropTypes.array.isRequired
     }
 
     state = {

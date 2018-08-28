@@ -20,10 +20,10 @@ const CompositeGoogleMap = compose(
   withHandlers(() => {
     const refs = {
       map: undefined
-    };
+    }
     return {
       onMapMounted: () => ref => {
-        refs.map = ref;
+        refs.map = ref
         //console.log("Zoom to markers");
         const bounds = new window.google.maps.LatLngBounds();
         ref.props.children.forEach(child => {
@@ -48,7 +48,7 @@ const CompositeGoogleMap = compose(
       console.log(error);
       alert(
         "Error Occured while trying to render google maps API Please check your credentials"
-      );
+      )
     }
   }),
 
@@ -73,7 +73,6 @@ const CompositeGoogleMap = compose(
       {props.markers.map((marker, index) => (
         <Marker
           key={index}
-          icon={props.showInfoIndex === index ? props.markerIcon : iconDefault}
           position={{ lat: marker.lat, lng: marker.lng }}
           title={marker.title}
           onClick={event => {
@@ -81,36 +80,32 @@ const CompositeGoogleMap = compose(
               event,
               { lat: marker.lat, lng: marker.lng },
               { index }
-            );
+            )
           }}
           animation={
             props.showInfoIndex === index
               ? google.maps.Animation.BOUNCE
               : google.maps.Animation.DROP
           } //CUSTOM_FADE BOUNCE
-        >
-          {" "}
-          {props.showInfoIndex === index && (
+        >{props.showInfoIndex === index && 
             <InfoWindow
               onCloseClick={event => {
                 props.onToggleOpen(
                   event,
                   { lat: marker.lat, lng: marker.lng },
                   { index }
-                );
-              }}
-            >
+                )}}>
               <InfoWindowContent
                 title={marker.title}
                 latlng={{ lat: marker.lat, lng: marker.lng }}
                 venueId={marker.venueId}
               />
             </InfoWindow>
-          )}
+          }
         </Marker>
       ))}
     </GoogleMap>
-  );
+  )
 });
 
 export default CompositeGoogleMap
